@@ -22,8 +22,6 @@ import javax.swing.JLabel;
 
 import junit.framework.Assert;
 
-import org.devzendo.commonapp.gui.GUIUtils;
-import org.devzendo.commonapp.gui.GUIValueObtainer;
 import org.junit.Test;
 
 

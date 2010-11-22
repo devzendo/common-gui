@@ -21,8 +21,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JMenuItem;
 
-import org.devzendo.commonapp.gui.menu.MenuIdentifier;
-import org.devzendo.commonapp.gui.menu.MenuWiring;
 import org.devzendo.commoncode.logging.LoggingUnittestHelper;
 import org.junit.Assert;
 import org.junit.Before;
