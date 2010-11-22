@@ -19,7 +19,6 @@ package org.devzendo.commonapp.gui;
 import java.awt.Frame;
 import java.io.IOException;
 
-import org.devzendo.commonapp.gui.MainFrameFactory;
 import org.devzendo.commonapp.spring.springloader.ApplicationContext;
 import org.devzendo.commonapp.spring.springloader.SpringLoaderUnittestCase;
 import org.junit.Assert;
@@ -30,7 +29,7 @@ import org.junit.Test;
  * @author matt
  *
  */
-@ApplicationContext("org/devzendo/commongui/MainFrameFactoryTestCase.xml")
+@ApplicationContext("org/devzendo/commonapp/gui/MainFrameFactoryTestCase.xml")
 public final class TestMainFrameFactory extends SpringLoaderUnittestCase {
 
     /**
