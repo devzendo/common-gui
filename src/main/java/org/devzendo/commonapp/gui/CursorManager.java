@@ -34,18 +34,21 @@ import org.devzendo.commoncode.string.StringUtils;
  * Handlings make benefit great user interaction of hourglass/normal cursor.
  * @author borat
  *
+ * Allows applications to easily set/remove the hourglass cursor, and detect
+ * when an app is 'stuck' with the hourglass.
  */
 public final class CursorManager {
     private static final Logger LOGGER = Logger.getLogger(CursorManager.class);
     private static final Cursor HOURGLASS = new Cursor(Cursor.WAIT_CURSOR);
     private static final Cursor NORMAL = new Cursor(Cursor.DEFAULT_CURSOR);
-    private JFrame frame = null;
+    private JFrame mMainFrame = null;
 
-    private AtomicBoolean hourglass = new AtomicBoolean(false);
-    private AtomicLong hourglassSetTime = new AtomicLong(0);
-    private Thread stuckDetector;
-    private Object lock;
-    private List<String> hourglassCallers;
+    private final AtomicBoolean mHourglassCursorActive = new AtomicBoolean(false);
+    private final AtomicLong mHourglassSetTime = new AtomicLong(0);
+    private Thread mStuckDetectorThread;
+    private Object mLock;
+    private List<String> mHourglassCallers;
+    private boolean mAlive = true;
     
 
     /**
@@ -57,21 +60,36 @@ public final class CursorManager {
     }
 
     private void startStuckDetector() {
-        lock = new Object();
-        hourglassCallers = new ArrayList<String>();
-        stuckDetector = new Thread(new StuckHourGlassDetector());
-        stuckDetector.setDaemon(true);
-        stuckDetector.setName("Stuck Hourglass Detector");
-        stuckDetector.start();
+        mLock = new Object();
+        mHourglassCallers = new ArrayList<String>();
+        mStuckDetectorThread = new Thread(new StuckHourGlassDetector());
+        mStuckDetectorThread.setDaemon(true);
+        mStuckDetectorThread.setName("Stuck Hourglass Detector");
+        mStuckDetectorThread.start();
     }
     
+    /**
+     * @return the application's main frame.
+     */
+    public JFrame getMainFrame() {
+        return mMainFrame;
+    }
+
     /**
      * Set the application's main frame.
      * @param mainFrame the main application's frame
      */
     public void setMainFrame(final JFrame mainFrame) {
-        frame = mainFrame;
+        mMainFrame = mainFrame;
         LOGGER.debug("CursorManager's main frame has been set to " + mainFrame);
+    }
+    
+    /**
+     * Shut down the stuck hourglass detection thread.
+     */
+    public void shutdown() {
+        mAlive = false;
+        mStuckDetectorThread.interrupt();
     }
     
     /**
@@ -80,13 +98,13 @@ public final class CursorManager {
      */
     public void hourglass(final String caller) {
         LOGGER.debug("Setting hourglass cursor");
-        if (frame != null) {
-            frame.setCursor(HOURGLASS);
-            hourglassCallers.add(caller);
-            hourglass.set(true);
-            hourglassSetTime.set(System.currentTimeMillis());
-            synchronized (lock) {
-                lock.notify();
+        if (mMainFrame != null) {
+            mMainFrame.setCursor(HOURGLASS);
+            mHourglassCallers.add(caller);
+            mHourglassCursorActive.set(true);
+            mHourglassSetTime.set(System.currentTimeMillis());
+            synchronized (mLock) {
+                mLock.notify();
             }
         }
         final Component glassPane = getGlassPane();
@@ -117,18 +135,18 @@ public final class CursorManager {
      */
     public void normal(final String caller) {
         LOGGER.debug("Setting normal cursor");
-        if (frame != null) {
-            frame.setCursor(NORMAL);
-            hourglass.set(false);
-            hourglassSetTime.set(0);
-            if (hourglassCallers.size() > 0) {
-                final int lastIndex = hourglassCallers.size() - 1;
-                if (hourglassCallers.get(lastIndex).equals(caller)) {
-                    hourglassCallers.remove(lastIndex);
+        if (mMainFrame != null) {
+            mMainFrame.setCursor(NORMAL);
+            mHourglassCursorActive.set(false);
+            mHourglassSetTime.set(0);
+            if (mHourglassCallers.size() > 0) {
+                final int lastIndex = mHourglassCallers.size() - 1;
+                if (mHourglassCallers.get(lastIndex).equals(caller)) {
+                    mHourglassCallers.remove(lastIndex);
                 }
             }
-            synchronized (lock) {
-                lock.notify();
+            synchronized (mLock) {
+                mLock.notify();
             }
         }
         final Component glassPane = getGlassPane();
@@ -155,11 +173,11 @@ public final class CursorManager {
     }
 
     private Component getGlassPane() {
-        if (frame == null) {
+        if (mMainFrame == null) {
             LOGGER.warn("Frame is null");
             return null;
         }
-        final JRootPane rootPane = frame.getRootPane();
+        final JRootPane rootPane = mMainFrame.getRootPane();
         if (rootPane == null) {
             LOGGER.warn("JRootPane is null");
             return null;
@@ -179,21 +197,21 @@ public final class CursorManager {
      */
     private class StuckHourGlassDetector implements Runnable {      
         public void run() {
-            while (Thread.currentThread().isAlive()) {
-                if (hourglass.get()) {
+            while (mAlive && Thread.currentThread().isAlive()) {
+                if (mHourglassCursorActive.get()) {
                     // hourglass
                     try {
                         LOGGER.debug("waiting a while for hourglass to get stuck");
-                        synchronized (lock) {
-                            lock.wait(30000);
+                        synchronized (mLock) {
+                            mLock.wait(30000);
                         }
-                        if (hourglass.get()) {
+                        if (mHourglassCursorActive.get()) {
                             LOGGER.debug("in hourglass state");
-                            if (hourglassSetTime.get() != 0) {
-                                final long stuckFor = System.currentTimeMillis() - hourglassSetTime.get();
+                            if (mHourglassSetTime.get() != 0) {
+                                final long stuckFor = System.currentTimeMillis() - mHourglassSetTime.get();
                                 if (stuckFor > 28000) {
                                     LOGGER.warn("The hourglass cursor appears to have been stuck for " + StringUtils.translateTimeDuration(stuckFor));
-                                    for (String caller : hourglassCallers) {
+                                    for (final String caller : mHourglassCallers) {
                                         LOGGER.warn("  " + caller);
                                     }
                                 } else {
@@ -213,8 +231,8 @@ public final class CursorManager {
                     // normal
                     try {
                         LOGGER.debug("waiting for hourglass...");
-                        synchronized (lock) {
-                            lock.wait();
+                        synchronized (mLock) {
+                            mLock.wait();
                         }
                         LOGGER.debug("out of wait for hourglass");
                     } catch (final InterruptedException e) {
