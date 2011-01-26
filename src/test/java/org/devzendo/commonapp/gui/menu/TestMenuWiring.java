@@ -110,6 +110,19 @@ public final class TestMenuWiring {
      * 
      */
     @Test
+    public void testSetActionListenerWithoutMenuItem() {
+        final ActionListener actionListener = new ActionListener() {
+            public void actionPerformed(final ActionEvent e) {
+            }
+        };
+        menuWiring.setActionListener(TestMenuWiring.FILE_CLOSE, actionListener);
+        Assert.assertEquals(actionListener, menuWiring.getActionListener(TestMenuWiring.FILE_CLOSE));
+    }
+
+    /**
+     * 
+     */
+    @Test
     public void testStoreMenuItemAgainRetainsActionListener() {
         final JMenuItem menuItem1 = new JMenuItem();
         menuWiring.storeMenuItem(TestMenuWiring.FILE_CLOSE, menuItem1);
@@ -142,7 +155,8 @@ public final class TestMenuWiring {
         Assert.assertNull(result[0]);
         final ActionEvent event = new ActionEvent(menuItem, 69, "wahey");
         menuWiring.injectActionEvent(TestMenuWiring.FILE_CLOSE, event);
-        Assert.assertEquals(event.getSource(), result[0].getSource());
+        Assert.assertEquals(event.getSource(), result[0].getSource()); // which equals...
+        Assert.assertEquals(menuItem, result[0].getSource());
         // does not match for some reason Assert.assertEquals(event.getID(), result[0].getID());
         Assert.assertEquals(event.getActionCommand(), result[0].getActionCommand());
     }
@@ -167,6 +181,32 @@ public final class TestMenuWiring {
         // that contains the JMenuItem, so we can only check that
         Assert.assertNotNull(result[0]);
         Assert.assertEquals(menuItem, result[0].getSource());
+    }
+
+    /**
+     * 
+     */
+    @Test
+    public void testGeneratedTriggeringOfMenuItemDispatchesWithoutMenuItemIfNoneDefined() {
+        final ActionEvent[] result = new ActionEvent[] {null};
+        final ActionListener actionListener = new ActionListener() {
+            public void actionPerformed(final ActionEvent e) {
+                result[0] = e;
+            }
+        };
+        menuWiring.setActionListener(TestMenuWiring.FILE_CLOSE, actionListener);
+        Assert.assertNull(result[0]);
+        menuWiring.triggerActionListener(TestMenuWiring.FILE_CLOSE);
+        // With triggerActionListener and no MenuItem attached, the dummy event
+        // that is created contains the MenuIdentifier - as that's all we have
+        // available, so we can only check that.
+        // Also, the indirect ActionListener is triggered - no MenuItem means
+        // there are no direct ActionListeners - but the observable effect is
+        // the same: the ActionListener above is called.
+        Assert.assertEquals(TestMenuWiring.FILE_CLOSE, result[0].getSource());
+        // The source can't be a MenuItem since there isn't one, and
+        // ActionEvents cannot have a null source. I send the MenuIdentifier,
+        // because I have to send *something*, and this made most sense.
     }
 
     /**

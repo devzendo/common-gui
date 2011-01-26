@@ -42,9 +42,19 @@ public final class MenuWiring {
      *
      */
     private class MenuDetails {
-        private final JMenuItem stashMenuItem;
-        private ActionListener stashActionListener;
+        private JMenuItem mMenuItem;
+        private ActionListener mActionListener;
 
+        /**
+         * Create a MenuDetails with no JMenuItem until set, and no
+         * ActionListener until one is set.
+         * 
+         */
+        public MenuDetails() {
+            this.mMenuItem = null;
+            this.mActionListener = null;
+        }
+        
         /**
          * Create a MenuDetails for a given JMenuItem, with no ActionListener
          * until one is set.
@@ -52,29 +62,36 @@ public final class MenuWiring {
          * @param jMenuItem the JMenuItem for this stash 
          */
         public MenuDetails(final JMenuItem menuItem) {
-            this.stashMenuItem = menuItem;
-            this.stashActionListener = null;
+            this.mMenuItem = menuItem;
+            this.mActionListener = null;
         }
 
         /**
          * @return the actionListener
          */
         public ActionListener getActionListener() {
-            return stashActionListener;
+            return mActionListener;
         }
 
         /**
          * @param actionListener the actionListener to set
          */
         public void setActionListener(final ActionListener actionListener) {
-            this.stashActionListener = actionListener;
+            this.mActionListener = actionListener;
         }
 
+        /**
+         * @param menuItem the JMenuItem to set
+         */
+        public void setMenuItem(final JMenuItem menuItem) {
+            this.mMenuItem = menuItem;
+        }
+        
         /**
          * @return the menuItem
          */
         public JMenuItem getMenuItem() {
-            return stashMenuItem;
+            return mMenuItem;
         }
     }
     private final Map<MenuIdentifier, MenuDetails> menuDetailsMap;
@@ -138,7 +155,10 @@ public final class MenuWiring {
                         return;
                     }
                     final ActionListener actionListener = menuDetails.getActionListener();
-                    if (actionListener != null) {
+                    if (actionListener == null) {
+                        LOGGER.debug("No indirect ActionListener stored for menu identifier " + menuIdentifier);
+                    } else {
+                        LOGGER.debug("Calling indirect ActionListener " + actionListener + " for menu identifier " + menuIdentifier);
                         actionListener.actionPerformed(e);
                     }
                 }
@@ -158,6 +178,8 @@ public final class MenuWiring {
             final MenuDetails existingMenuDetails = menuDetailsMap.get(menuIdentifier);
             if (existingMenuDetails == null) {
                 menuDetailsMap.put(menuIdentifier, new MenuDetails(menuItem));
+            } else {
+                existingMenuDetails.setMenuItem(menuItem);
             }
             menuItem.addActionListener(generateDirectActionListener(menuIdentifier));
         }
@@ -174,7 +196,13 @@ public final class MenuWiring {
     public void setActionListener(final MenuIdentifier menuIdentifier, final ActionListener actionListener) {
         synchronized (menuDetailsMap) {
             final MenuDetails menuDetails = menuDetailsMap.get(menuIdentifier);
-            if (menuDetails != null) {
+            if (menuDetails == null) {
+                final MenuDetails newMenuDetails = new MenuDetails();
+                newMenuDetails.setActionListener(actionListener);
+                menuDetailsMap.put(menuIdentifier, newMenuDetails);
+                LOGGER.warn("Setting ActionListener for menu identifier " + menuIdentifier + ": it currently has no associated menu item");
+            } else {
+                LOGGER.debug("Storing indirect ActionListener " + actionListener + " for menu identifier " + menuIdentifier);
                 menuDetails.setActionListener(actionListener);
             }
         }
@@ -183,14 +211,38 @@ public final class MenuWiring {
     /**
      * Trigger the actioning of an action listener given its
      * menu identifier.
+     * </p>
+     * The ActionEvent's source will contain the MenuItem stored for this
+     * MenuIdentifier, or, if no MenuItem has been stored, it will contain the
+     * MenuIdentifier itself. This is used in the case where menu ActionListeners
+     * are to be triggered by non-menu activities:
+     * </p>
+     * (e.g. an adapter that translates
+     * the Apple menu's Quit item (not a real MenuItem) into the triggering of
+     * the File/Exit ActionListener - on the Mac, there is no File/Exit menu
+     * item). 
      * @param menuIdentifier the identifier of the menu item whose
      * action listener is to be triggered.
      */
     public void triggerActionListener(final MenuIdentifier menuIdentifier) {
         synchronized (menuDetailsMap) {
+            LOGGER.debug("Triggering action listener for " + menuIdentifier);
             final MenuDetails menuDetails = menuDetailsMap.get(menuIdentifier);
-            if (menuDetails != null && menuDetails.getMenuItem() != null) {
-                injectActionEvent(menuIdentifier, new ActionEvent(menuDetails.getMenuItem(), 0, ""));
+            if (menuDetails != null) {
+                final JMenuItem menuItem = menuDetails.getMenuItem();
+                if (menuItem == null) {
+                    LOGGER.warn("There is no menu item stored for menu identifier " + menuIdentifier + ": passing to indirect action listener");
+                    final ActionListener indirectActionListener = menuDetails.mActionListener;
+                    if (indirectActionListener != null) {
+                        indirectActionListener.actionPerformed(new ActionEvent(menuIdentifier, 0, ""));
+                    } else {
+                        LOGGER.warn("There is no indirect action listener for menu identifier " + menuIdentifier + ": cannot deliver event");
+                    }
+                } else {
+                    injectActionEvent(menuIdentifier, new ActionEvent(menuItem, 0, ""));
+                }
+            } else {
+                LOGGER.warn("Not triggering action listener since there are no menu details stored for " + menuIdentifier);
             }
         }
     }
