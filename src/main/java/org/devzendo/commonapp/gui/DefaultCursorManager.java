@@ -37,8 +37,8 @@ import org.devzendo.commoncode.string.StringUtils;
  * Allows applications to easily set/remove the hourglass cursor, and detect
  * when an app is 'stuck' with the hourglass.
  */
-public final class CursorManager {
-    private static final Logger LOGGER = Logger.getLogger(CursorManager.class);
+public final class DefaultCursorManager {
+    private static final Logger LOGGER = Logger.getLogger(DefaultCursorManager.class);
     private static final Cursor HOURGLASS = new Cursor(Cursor.WAIT_CURSOR);
     private static final Cursor NORMAL = new Cursor(Cursor.DEFAULT_CURSOR);
     private JFrame mMainFrame = null;
@@ -55,7 +55,7 @@ public final class CursorManager {
      * Instantiate the CursorManager, which won't be able to effect change
      * of the cursor until a main component has been set.
      */
-    public CursorManager() {
+    public DefaultCursorManager() {
         startStuckDetector();
     }
 
