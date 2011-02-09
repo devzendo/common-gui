@@ -158,7 +158,7 @@ public final class CursorManager {
     }
 
     /**
-     * Set the normla cursor, if a main component has been set. This
+     * Set the normal cursor, if a main component has been set. This
      * always runs on the event thread. If you're sure you're already on
      * the event thread, use normal().
      * @param caller the name of the caller, for stuck hourglass detection
