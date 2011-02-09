@@ -37,7 +37,7 @@ import org.devzendo.commoncode.string.StringUtils;
  * Allows applications to easily set/remove the hourglass cursor, and detect
  * when an app is 'stuck' with the hourglass.
  */
-public final class DefaultCursorManager {
+public final class DefaultCursorManager implements CursorManager {
     private static final Logger LOGGER = Logger.getLogger(DefaultCursorManager.class);
     private static final Cursor HOURGLASS = new Cursor(Cursor.WAIT_CURSOR);
     private static final Cursor NORMAL = new Cursor(Cursor.DEFAULT_CURSOR);
@@ -69,15 +69,14 @@ public final class DefaultCursorManager {
     }
     
     /**
-     * @return the application's main frame.
+     * {@inheritDoc}
      */
     public JFrame getMainFrame() {
         return mMainFrame;
     }
 
     /**
-     * Set the application's main frame.
-     * @param mainFrame the main application's frame
+     * {@inheritDoc}
      */
     public void setMainFrame(final JFrame mainFrame) {
         mMainFrame = mainFrame;
@@ -85,7 +84,7 @@ public final class DefaultCursorManager {
     }
     
     /**
-     * Shut down the stuck hourglass detection thread.
+     * {@inheritDoc}
      */
     public void shutdown() {
         mAlive = false;
@@ -93,8 +92,7 @@ public final class DefaultCursorManager {
     }
     
     /**
-     * Set the hourglass cursor, if a main component has been set.
-     * @param caller the name of the caller, for stuck hourglass detection
+     * {@inheritDoc}
      */
     public void hourglass(final String caller) {
         LOGGER.debug("Setting hourglass cursor");
@@ -115,10 +113,7 @@ public final class DefaultCursorManager {
     }
     
     /**
-     * Set the hourglass cursor, if a main component has been set. This
-     * always runs on the event thread. If you're sure you're already on
-     * the event thread, use hourglass().
-     * @param caller the name of the caller, for stuck hourglass detection
+     * {@inheritDoc}
      */
     public void hourglassViaEventThread(final String caller) {
         final Runnable r = new Runnable() {
@@ -130,8 +125,7 @@ public final class DefaultCursorManager {
     }
 
     /**
-     * Set the normal cursor, if the main component has been set. 
-     * @param caller the name of the caller, for stuck hourglass detection
+     * {@inheritDoc}
      */
     public void normal(final String caller) {
         LOGGER.debug("Setting normal cursor");
@@ -158,10 +152,7 @@ public final class DefaultCursorManager {
     }
 
     /**
-     * Set the normal cursor, if a main component has been set. This
-     * always runs on the event thread. If you're sure you're already on
-     * the event thread, use normal().
-     * @param caller the name of the caller, for stuck hourglass detection
+     * {@inheritDoc}
      */
     public void normalViaEventThread(final String caller) {
         final Runnable r = new Runnable() {

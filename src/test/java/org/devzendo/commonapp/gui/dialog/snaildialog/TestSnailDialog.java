@@ -21,7 +21,7 @@ import java.util.concurrent.CountDownLatch;
 import javax.swing.JFrame;
 
 import org.apache.log4j.Logger;
-import org.devzendo.commonapp.gui.CursorManager;
+import org.devzendo.commonapp.gui.DefaultCursorManager;
 import org.devzendo.commonapp.gui.GUIUtils;
 import org.devzendo.commoncode.concurrency.ThreadUtils;
 import org.devzendo.commoncode.logging.LoggingUnittestHelper;
@@ -68,7 +68,7 @@ public final class TestSnailDialog  {
                 mainFrame.setVisible(true);
                 LOGGER.debug("Creating dialog");
                 snailDialog = new StubRecordingSnailDialog(mainFrame,
-                        new CursorManager());
+                        new DefaultCursorManager());
                 snailDialog.postConstruct();
                 snailDialog.pack();
                 
