@@ -17,8 +17,10 @@
 package org.devzendo.commonapp.gui;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.lang.reflect.InvocationTargetException;
 
+import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
 import org.apache.log4j.Logger;
@@ -80,5 +82,21 @@ public final class GUIUtils {
         return new Color(Math.max((int) (color.getRed() * FACTOR), 0), 
                  Math.max((int) (color.getGreen() * FACTOR), 0),
                  Math.max((int) (color.getBlue() * FACTOR), 0));
+    }
+    
+    /**
+     * Creates a JTextArea that's not editable, suitable for copying text from,
+     * but with the background colour the same as some parent component, into
+     * which client code will add the JTextArea. (By default, the background
+     * colour would possibly lead the user to think they could edit the text)
+     * 
+     * @param parent the parent component
+     * @return the JTextArea
+     */
+    public static JTextArea createNonEditableJTextAreaWithParentBackground(final Component parent) {
+        final JTextArea textArea = new JTextArea();
+        textArea.setEditable(false);
+        textArea.setBackground(parent.getBackground());
+        return textArea;
     }
 }
