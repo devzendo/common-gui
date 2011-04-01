@@ -88,7 +88,7 @@
     <dependency> <!-- Not released in central -->
       <groupId>ch.randelshofer</groupId>
       <artifactId>quaqua</artifactId>
-      <version>6.5</version> <!--  started with 5.2.1 -->
+      <version>7.3.4</version> <!--  started with 5.2.1, 6.5 -->
     </dependency>
   </dependencies>
   

@@ -16,12 +16,17 @@
 
 package org.devzendo.commonapp.gui;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import org.apache.log4j.Logger;
 import org.devzendo.commoncode.os.OSTypeDetect;
 import org.devzendo.commoncode.os.OSTypeDetect.OSType;
+
+import ch.randelshofer.quaqua.QuaquaManager;
 
 import com.jgoodies.looks.plastic.PlasticXPLookAndFeel;
 
@@ -45,6 +50,7 @@ public final class Beautifier {
      */
     public static void makeBeautiful() {
         if (OSTypeDetect.getInstance().getOSType() == OSType.MacOSX) {
+            LOGGER.info("Using Quaqua look and feel");
             System.setProperty("apple.laf.useScreenMenuBar", "true");
             
             // set system properties here that affect Quaqua
@@ -54,6 +60,14 @@ public final class Beautifier {
                "Quaqua.tabLayoutPolicy", "wrap"
             );
 
+            // Quaqua doesn't seem to render JButtons with their small form
+            // correctly, via button.putClientProperty("JComponent.sizeVariant",
+            // "small");
+            // so knock it out for now.
+            final Set<String> excludes = new HashSet<String>();
+            excludes.add("Button");
+            QuaquaManager.setExcludedUIs(excludes);
+
             // set the Quaqua Look and Feel in the UIManager
             try {
                  UIManager.setLookAndFeel(
@@ -61,9 +75,10 @@ public final class Beautifier {
                  );
             // set UI manager properties here that affect Quaqua
             } catch (final Exception e) {
-                // take an appropriate action here
+                LOGGER.warn("Could not set Quaqua look and feel:" + e.getMessage());
             }
         } else {
+            LOGGER.info("Using Plastic XP look and feel");
             try {
                 UIManager.setLookAndFeel(new PlasticXPLookAndFeel());
             } catch (final UnsupportedLookAndFeelException e) {
