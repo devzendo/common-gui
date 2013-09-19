@@ -60,6 +60,20 @@
         </dependency>
 
         <dependency>
+            <groupId>org.devzendo</groupId>
+            <artifactId>CommonCode</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.devzendo</groupId>
+            <artifactId>CommonCode</artifactId>
+            <version>1.0.2</version>
+            <scope>test</scope>
+            <classifier>tests</classifier>
+        </dependency>
+
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.4</version>
@@ -79,17 +93,20 @@
             <version>1.2.8</version>
         </dependency>
 
+        <!-- this should only be a dependency for non-Mac OSX -->
         <dependency>
             <groupId>com.jgoodies</groupId>
             <artifactId>looks</artifactId>
             <version>2.2.2</version>
+            <scope>provided</scope>
         </dependency>
 
-        <dependency> <!-- Not released in central -->
-            <groupId>ch.randelshofer</groupId>
-            <artifactId>quaqua</artifactId>
+        <!-- this should only be a dependency for Mac OSX -->
+        <dependency>
+            <groupId>org.devzendo</groupId>
+            <artifactId>Quaqua</artifactId>
             <version>7.3.4</version>
-            <!--  started with 5.2.1, 6.5 -->
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
