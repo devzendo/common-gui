@@ -16,19 +16,14 @@
 
 package org.devzendo.commonapp.gui;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-
 import org.apache.log4j.Logger;
 import org.devzendo.commoncode.os.OSTypeDetect;
 import org.devzendo.commoncode.os.OSTypeDetect.OSType;
 
-import ch.randelshofer.quaqua.QuaquaManager;
-
-import com.jgoodies.looks.plastic.PlasticXPLookAndFeel;
+import javax.swing.*;
+import java.lang.reflect.Method;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Encapsulates the setting of the look and feel.
@@ -49,7 +44,9 @@ public final class Beautifier {
      * 
      */
     public static void makeBeautiful() {
-        if (OSTypeDetect.getInstance().getOSType() == OSType.MacOSX) {
+        final OSType osType = OSTypeDetect.getInstance().getOSType();
+        LOGGER.info("OS type detected as " + osType);
+        if (osType == OSType.MacOSX) {
             LOGGER.info("Using Quaqua look and feel");
             System.setProperty("apple.laf.useScreenMenuBar", "true");
             
@@ -66,23 +63,37 @@ public final class Beautifier {
             // so knock it out for now.
             final Set<String> excludes = new HashSet<String>();
             excludes.add("Button");
-            QuaquaManager.setExcludedUIs(excludes);
+            try {
+                // call QuaquaManager.setExcludedUIs(excludes) reflectively
+                // so we don't call quaqua on non-Mac systems
+                final Class quaquaManagerClass = Class.forName("ch.randelshofer.quaqua.QuaquaManager");
+                final Method setExcludedUIsMethod = quaquaManagerClass.getMethod("setExcludedUIs", java.util.Set.class);
+                setExcludedUIsMethod.invoke(quaquaManagerClass, excludes);
+            } catch (final Exception e) {
+                LOGGER.warn("Could not set Quaqua exclusions:" + e.getMessage());
+            }
 
             // set the Quaqua Look and Feel in the UIManager
             try {
-                 UIManager.setLookAndFeel(
-                     "ch.randelshofer.quaqua.QuaquaLookAndFeel"
-                 );
-            // set UI manager properties here that affect Quaqua
+                UIManager.setLookAndFeel(
+                    "ch.randelshofer.quaqua.QuaquaLookAndFeel"
+                );
+                // set UI manager properties here that affect Quaqua
             } catch (final Exception e) {
                 LOGGER.warn("Could not set Quaqua look and feel:" + e.getMessage());
             }
         } else {
             LOGGER.info("Using Plastic XP look and feel");
+            // Do this reflectively so we don't reference jgoodies looks on
+            // non-Win/Linux (i.e. Mac) systems.
             try {
-                UIManager.setLookAndFeel(new PlasticXPLookAndFeel());
+                final Class plasticXPLookAndFeelClass = Class.forName("com.jgoodies.looks.plastic.PlasticXPLookAndFeel");
+                final LookAndFeel plasticXPLookAndFeel = (LookAndFeel) plasticXPLookAndFeelClass.newInstance();
+                UIManager.setLookAndFeel(plasticXPLookAndFeel);
             } catch (final UnsupportedLookAndFeelException e) {
                 LOGGER.warn("Plastic XP look and feel is not supported: " + e.getMessage());
+            } catch (final Exception e) {
+                LOGGER.warn("Could not set Plastic XP look and feel:" + e.getMessage());
             }
         }
     }
