@@ -4,7 +4,7 @@
     <groupId>org.devzendo</groupId>
     <artifactId>CommonGui</artifactId>
     <name>Common application GUI code</name>
-    <version>0.4.0</version>
+    <version>0.4.1-SNAPSHOT</version>
     <description>Common application GUI code
         (Apache License v2) 2008-2013 Matt Gumbley, DevZendo.org
     </description>
