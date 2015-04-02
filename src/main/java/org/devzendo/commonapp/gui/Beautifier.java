@@ -70,7 +70,7 @@ public final class Beautifier {
                 final Method setExcludedUIsMethod = quaquaManagerClass.getMethod("setExcludedUIs", java.util.Set.class);
                 setExcludedUIsMethod.invoke(quaquaManagerClass, excludes);
             } catch (final Exception e) {
-                LOGGER.warn("Could not set Quaqua exclusions:" + e.getMessage());
+                LOGGER.warn("Could not set Quaqua exclusions:" + e.getMessage(), e);
             }
 
             // set the Quaqua Look and Feel in the UIManager
@@ -80,7 +80,7 @@ public final class Beautifier {
                 );
                 // set UI manager properties here that affect Quaqua
             } catch (final Exception e) {
-                LOGGER.warn("Could not set Quaqua look and feel:" + e.getMessage());
+                LOGGER.warn("Could not set Quaqua look and feel:" + e.getMessage(), e);
             }
         } else {
             LOGGER.info("Using Plastic XP look and feel");
@@ -91,9 +91,9 @@ public final class Beautifier {
                 final LookAndFeel plasticXPLookAndFeel = (LookAndFeel) plasticXPLookAndFeelClass.newInstance();
                 UIManager.setLookAndFeel(plasticXPLookAndFeel);
             } catch (final UnsupportedLookAndFeelException e) {
-                LOGGER.warn("Plastic XP look and feel is not supported: " + e.getMessage());
+                LOGGER.warn("Plastic XP look and feel is not supported: " + e.getMessage(), e);
             } catch (final Exception e) {
-                LOGGER.warn("Could not set Plastic XP look and feel:" + e.getMessage());
+                LOGGER.warn("Could not set Plastic XP look and feel:" + e.getMessage(), e);
             }
         }
     }
