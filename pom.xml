@@ -2,13 +2,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.devzendo</groupId>
-    <artifactId>CommonGui</artifactId>
+    <artifactId>common-gui</artifactId>
     <name>Common application GUI code</name>
-    <version>0.4.1-SNAPSHOT</version>
+    <version>1.1.0-SNAPSHOT</version>
     <description>Common application GUI code
-        (Apache License v2) 2008-2013 Matt Gumbley, DevZendo.org
+        (Apache License v2) 2008-2015 Matt Gumbley, DevZendo.org
     </description>
-    <url>http://www.devzendo.org/content/commonapp</url>
+    <url>http://www.devzendo.org/content/commongui</url>
 
     <organization>
         <name>DevZendo.org</name>
@@ -23,11 +23,11 @@
         </license>
     </licenses>
     <scm>
-        <url>http://devzendo-org-commongui.googlecode.com/hg/</url>
-        <connection>scm:hg:http://devzendo-org-commongui.googlecode.com/hg/
+        <url>https://bitbucket.org/devzendo/common-gui</url>
+        <connection>scm:hg:https://bitbucket.org/devzendo/common-gui
         </connection>
         <developerConnection>
-            scm:hg:https://devzendo-org-commongui.googlecode.com/hg/
+            scm:hg:https://bitbucket.org/devzendo/common-gui
         </developerConnection>
     </scm>
     <developers>
@@ -40,35 +40,35 @@
 
     <parent>
         <groupId>org.devzendo</groupId>
-        <artifactId>GroupParent</artifactId>
-        <version>1.0.3</version>
+        <artifactId>group-parent</artifactId>
+        <version>1.1.0-SNAPSHOT</version>
     </parent>
 
     <dependencies>
         <dependency>
             <groupId>org.devzendo</groupId>
-            <artifactId>CommonApp</artifactId>
-            <version>0.4.2</version>
+            <artifactId>common-app</artifactId>
+            <version>1.1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>org.devzendo</groupId>
-            <artifactId>CommonApp</artifactId>
-            <version>0.4.2</version>
+            <artifactId>common-app</artifactId>
+            <version>1.1.0-SNAPSHOT</version>
             <scope>test</scope>
             <classifier>tests</classifier>
         </dependency>
 
         <dependency>
             <groupId>org.devzendo</groupId>
-            <artifactId>CommonCode</artifactId>
-            <version>1.0.2</version>
+            <artifactId>common-code</artifactId>
+            <version>1.1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>org.devzendo</groupId>
-            <artifactId>CommonCode</artifactId>
-            <version>1.0.2</version>
+            <artifactId>common-code</artifactId>
+            <version>1.1.0-SNAPSHOT</version>
             <scope>test</scope>
             <classifier>tests</classifier>
         </dependency>
@@ -76,21 +76,21 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.4</version>
+            <version>4.12</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
-            <version>2.3</version>
+            <version>3.3.1</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
-            <version>1.2.8</version>
+            <version>1.2.17</version>
         </dependency>
 
         <!-- this should only be a dependency for non-Mac OSX -->
@@ -115,7 +115,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.2</version>
+                <version>2.6</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
