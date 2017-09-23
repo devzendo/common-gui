@@ -36,7 +36,7 @@ import org.devzendo.commonapp.gui.SwingWorker;
  * An AbstractSnailDialog is a modal JDialog that takes a long time to
  * initialise to its final state.
  *
- * Examples might be the Tools->Options dialog (which loads several beans, one
+ * Examples might be the Tools/Options dialog (which loads several beans, one
  * for each tab), and the About dialog (which loads several pages of text).
  *
  * AbstractSnailDialogs use a two-phase construction to ensure
