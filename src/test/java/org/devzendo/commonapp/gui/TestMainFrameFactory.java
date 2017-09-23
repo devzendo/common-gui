@@ -21,8 +21,12 @@ import java.io.IOException;
 
 import org.devzendo.commonapp.spring.springloader.ApplicationContext;
 import org.devzendo.commonapp.spring.springloader.SpringLoaderUnittestCase;
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.Matcher;
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Test;
+import org.junit.matchers.JUnitMatchers;
 
 /**
  * Test the MainFrame FactoryBean
@@ -32,11 +36,9 @@ import org.junit.Test;
 @ApplicationContext("org/devzendo/commonapp/gui/MainFrameFactoryTestCase.xml")
 public final class TestMainFrameFactory extends SpringLoaderUnittestCase {
 
-    /**
-     *
-     */
     @Test
     public void testStoreMainFrame() {
+        Assume.assumeThat(System.getProperty("java.awt.headless"), CoreMatchers.nullValue());
         final Frame testFrame = new Frame();
 
         final MainFrameFactory mainFrameFactory = getMainFrameFactory();
@@ -54,6 +56,7 @@ public final class TestMainFrameFactory extends SpringLoaderUnittestCase {
      */
     @Test
     public void itsASingleton() throws IOException {
+        Assume.assumeThat(System.getProperty("java.awt.headless"), CoreMatchers.nullValue());
         final Frame testFrame = new Frame();
         getMainFrameFactory().setMainFrame(testFrame);
 
