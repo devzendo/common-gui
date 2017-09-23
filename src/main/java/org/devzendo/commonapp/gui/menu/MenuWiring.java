@@ -211,12 +211,12 @@ public final class MenuWiring {
     /**
      * Trigger the actioning of an action listener given its
      * menu identifier.
-     * </p>
+     *
      * The ActionEvent's source will contain the MenuItem stored for this
      * MenuIdentifier, or, if no MenuItem has been stored, it will contain the
      * MenuIdentifier itself. This is used in the case where menu ActionListeners
      * are to be triggered by non-menu activities:
-     * </p>
+     *
      * (e.g. an adapter that translates
      * the Apple menu's Quit item (not a real MenuItem) into the triggering of
      * the File/Exit ActionListener - on the Mac, there is no File/Exit menu

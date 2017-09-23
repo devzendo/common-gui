@@ -35,24 +35,24 @@ import org.devzendo.commonapp.gui.SwingWorker;
 /**
  * An AbstractSnailDialog is a modal JDialog that takes a long time to
  * initialise to its final state.
- * <p>
+ *
  * Examples might be the Tools->Options dialog (which loads several beans, one
  * for each tab), and the About dialog (which loads several pages of text).
- * <p>
+ *
  * AbstractSnailDialogs use a two-phase construction to ensure
  * correct storage of subclass instance data before any real work
  * is done.
- * <p>
+ *
  * Subclass constructors should upcall to super(), then store any
  * constructor parameters they need, and NO MORE.
- * <p>
+ *
  * Client code should call the subclass constructor, then call
  * postConstruct(). This ensures that all subclass instance data
  * is stored correctly. 
- * <p>
+ *
  * After postConstruct(), the hourglass cursor will be shown, and once
  * construction is finished, it will be set back to normal. 
- * <p>
+ *
  * During initialisation, several SwingWorkers can be constructed and added
  * to a list. Once the dialog is visible, these will be executed (then the
  * cursor is set back normal).
