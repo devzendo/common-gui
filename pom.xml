@@ -23,9 +23,9 @@
         </license>
     </licenses>
     <scm>
-        <url>https://bitbucket.org/devzendo/common-gui</url>
-        <connection>scm:hg:https://bitbucket.org/devzendo/common-gui</connection>
-        <developerConnection>scm:hg:https://bitbucket.org/devzendo/common-gui</developerConnection>
+        <url>https://github.com/devzendo/common-gui.git</url>
+        <connection>scm:git:https://github.com/devzendo/common-gui.git</connection>
+        <developerConnection>scm:git:git@github.com:devzendo/common-gui.git</developerConnection>
     </scm>
     <developers>
         <developer>
